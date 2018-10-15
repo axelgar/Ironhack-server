@@ -67,6 +67,9 @@ router.post('/create', (req, res, next) => {
   const category = req.body.type;
   return Curriculum.findOne({ type: category })
     .then((result) => {
+      if (!result) {
+        res.status(404).json({ code: 'not-found' });
+      }
       const cohort = new Cohort({
         teacher: req.body.teacher,
         tas: req.body.tas,
@@ -131,6 +134,9 @@ router.get('/:id', (req, res, next) => {
     .populate({ path: 'days', populate: { path: 'units' } })
     .populate('parkingLot')
     .then((cohort) => {
+      if (!cohort) {
+        res.status(404).json({ code: 'not-found' });
+      }
       res.status(200).json(cohort);
     })
     .catch(next);

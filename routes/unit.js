@@ -12,7 +12,7 @@ router.get('/', (req, res, next) => {
   if (!req.session.currentUser) {
     return res.status(401).json({ code: 'unauthorized' });
   }
-  Unit.find({})
+  return Unit.find({})
     .then((results) => {
       res.status(200).json(results);
     })
@@ -44,7 +44,7 @@ router.get('/:id', (req, res, next) => {
   if (!id || !ObjectId.isValid(id)) {
     res.status(404).json({ code: 'not-found' });
   }
-  Unit.findById(id)
+  return Unit.findById(id)
     .then((unit) => {
       res.status(200).json(unit);
     })
@@ -70,7 +70,6 @@ router.put('/transfer/:id', (req, res, next) => {
   if (!req.session.currentUser) {
     return res.status(401).json({ code: 'unauthorized' });
   }
-  // const unitId = req.params.id;
   const mongoose = require('mongoose');
   const unitId = mongoose.mongo.ObjectID(req.params.id);
   if (!unitId || !ObjectId.isValid(unitId)) {
@@ -79,12 +78,12 @@ router.put('/transfer/:id', (req, res, next) => {
   const sourceList = req.body.from;
   const targetList = req.body.to;
   let newCard = true;
-  Unit.findByIdAndUpdate(unitId, { $set: { list: targetList } }, { new: true })
+  return Unit.findByIdAndUpdate(unitId, { $set: { list: targetList } }, { new: true })
     .then(unit => {
-      Cohort.findById(sourceList)
+      return Cohort.findById(sourceList)
         .then((result) => {
           if (result) {
-            Cohort.findByIdAndUpdate(sourceList, { $pull: { parkingLot: unitId } }).exec()
+            return Cohort.findByIdAndUpdate(sourceList, { $pull: { parkingLot: unitId } }).exec()
               .then(() => {
                 return Day.findById(targetList);
               })
@@ -123,7 +122,7 @@ router.put('/transfer/:id', (req, res, next) => {
                     res.status(422).json({ code: 'unprosessable-entity' });
                   }
                 } else {
-                  Day.findById(targetList)
+                  return Day.findById(targetList)
                     .then((result) => {
                       result.units.forEach((unit) => {
                         if (unit === unitId) {

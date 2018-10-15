@@ -10,7 +10,7 @@ router.get('/', (req, res, next) => {
   if (!req.session.currentUser) {
     return res.status(401).json({ code: 'unauthorized' });
   }
-  Curriculum.find({})
+  return Curriculum.find({})
     .then((results) => {
       res.status(200).json(results);
     })
@@ -41,8 +41,11 @@ router.get('/:id', (req, res, next) => {
   }
   Curriculum.findById(id)
     .populate('units')
-    .then((results) => {
-      res.status(200).json(results);
+    .then((result) => {
+      if (!result) {
+        res.status(404).json({ code: 'not-found' });
+      }
+      res.status(200).json(result);
     })
     .catch(next);
 });
