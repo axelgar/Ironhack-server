@@ -73,7 +73,6 @@ router.post('/create', (req, res, next) => {
       const cohort = new Cohort({
         teacher: req.body.teacher,
         tas: req.body.tas,
-        students: req.body.students,
         location: req.body.location,
         type: req.body.type,
         language: req.body.language,
