@@ -95,35 +95,16 @@ router.post('/user-create', (req, res, next) => {
     .catch(next);
 });
 
-router.get('/:id', (req, res, next) => {
+router.get('/settings', (req, res, next) => {
+  const user = req.session.currentUser;
   if (!req.session.currentUser) {
     return res.status(401).json({ code: 'unauthorized' });
   }
-  const id = req.params.id;
-  if (!id || !ObjectId.isValid(id)) {
-    res.status(404).json({ code: 'not-found' });
-  }
-  User.findById(id)
-    .then((user) => {
-      if (!user) {
-        console.log(user);
-        return res.status(404).json({ code: 'not-found' });
-      }
-      console.log(user);
-      res.status(200).json(user);
-    })
-    .catch(next);
-});
-
-router.get('/settings/:id', (req, res, next) => {
-  if (!req.session.currentUser) {
-    return res.status(401).json({ code: 'unauthorized' });
-  }
-  const id = req.params.id;
-  if (!id || !ObjectId.isValid(id)) {
-    return res.status(404).json({ code: 'not-found' });
-  }
-  User.findById(id)
+  // const id = req.params.id;
+  // if (!id || !ObjectId.isValid(id)) {
+  //   return res.status(404).json({ code: 'not-found' });
+  // }
+  User.findById(user._id)
     .then((result) => {
       const user = { user: result };
 
@@ -132,15 +113,15 @@ router.get('/settings/:id', (req, res, next) => {
     .catch(next);
 });
 
-router.put('/settings/:id', (req, res, next) => {
+router.put('/settings', (req, res, next) => {
   const user = req.session.currentUser;
   if (!req.session.currentUser) {
     return res.redirect('/auth/login');
   }
-  const id = req.params.id;
-  if (!id || !ObjectId.isValid(id)) {
-    return res.status(404).json({ code: 'not-found1' });
-  }
+  // const id = req.params.id;
+  // if (!id || !ObjectId.isValid(id)) {
+  //   return res.status(404).json({ code: 'not-found1' });
+  // }
   const { currentPassword, newPassword } = req.body;
   const validPassword = user.password;
 
@@ -166,23 +147,55 @@ router.put('/settings/:id', (req, res, next) => {
   }
 });
 
-router.post('/edit/:id', uploadCloud.single('file'), function (req, res, next) {
+router.post('/edit', uploadCloud.single('file'), function (req, res, next) {
+  const user = req.session.currentUser;
   if (!req.session.currentUser) {
-    return res.status(404).json({ code: 'not-found' });
+    return res.status(404).json({ code: 'not-found' }); // todo not autorised
   }
-  const id = req.params.id;
-  if (!id || !ObjectId.isValid(id)) {
-    return res.status(404).json({ code: 'not-found' });
-  }
-  const newUser = {
+  const updates = {
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     description: req.body.description,
     profilePic: req.file.url
   };
-  User.findOneAndUpdate({ _id: id }, { $set: newUser })
+  User.findOneAndUpdate({ _id: user._id }, { $set: updates }, { new: true })
     .then((user) => {
       return res.status(200).json(user);
+    })
+    .catch(next);
+});
+
+router.put('/add-project', (req, res, next) => {
+  const user = req.session.currentUser;
+  if (!req.session.currentUser) {
+    return res.status(401).json({ code: 'unauthorized' });
+  }
+  const update = req.body;
+  console.log(update);
+  const options = { new: true };
+  User.findByIdAndUpdate(user._id, { $push: { projects: update } }, options)
+    .then(user => {
+      res.status(200).json(user);
+    })
+    .catch(error => next(error));
+});
+
+router.get('/:id', (req, res, next) => {
+  if (!req.session.currentUser) {
+    return res.status(401).json({ code: 'unauthorized' });
+  }
+  const id = req.params.id;
+  if (!id || !ObjectId.isValid(id)) {
+    res.status(404).json({ code: 'not-found' });
+  }
+  User.findById(id)
+    .then((user) => {
+      if (!user) {
+        console.log(user);
+        return res.status(404).json({ code: 'not-found' });
+      }
+      console.log(user);
+      res.status(200).json(user);
     })
     .catch(next);
 });
