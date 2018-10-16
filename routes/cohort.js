@@ -88,8 +88,10 @@ router.post('/create', (req, res, next) => {
           return Unit.find({ category: 'break' });
         })
         .then((results) => {
-          console.log(results);
-          console.log(results[1]._id);
+          for (let i = 0; i < results.length; i++) {
+            results[i].position = 10000 + (i * 1000);
+            results[i].save();
+          }
           cohort.days.forEach((day) => {
             results.forEach((result) => {
               day.units.push(result._id);

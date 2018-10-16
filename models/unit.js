@@ -47,7 +47,9 @@ const unitSchema = new Schema({
     type: ObjectId,
     ref: 'Unit'
   },
-  position: Number
+  position: {
+    type: Number
+  }
 });
 
 const Unit = mongoose.model('Unit', unitSchema);
