@@ -166,20 +166,19 @@ router.get('/:id', (req, res, next) => {
 //     })
 //     .catch(next);
 // });
-
-// router.delete('/:id', (req, res, next) => {
-// if (!req.session.currentUser) {
-//   return res.status(401).json({ code: 'unauthorized' });
-// }
-//   const id = req.params.id;
-//   if (!id || !ObjectId.isValid(id)) {
-//     res.status(404).json({ code: 'not-found' });
-//   }
-//   Cohort.remove({ _id: id })
-//     .then(() => {
-//       res.json({ code: 'cohort deleted' });
-//     })
-//     .catch(next);
-// });
+router.delete('/:id', (req, res, next) => {
+  if (!req.session.currentUser) {
+    return res.status(401).json({ code: 'unauthorized' });
+  }
+  const id = req.params.id;
+  if (!id || !ObjectId.isValid(id)) {
+    res.status(404).json({ code: 'not-found' });
+  }
+  Cohort.remove({ _id: id })
+    .then(() => {
+      res.json({ message: 'cohort deleted' });
+    })
+    .catch(next);
+});
 
 module.exports = router;

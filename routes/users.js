@@ -6,6 +6,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 const mongoose = require('mongoose');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 const User = require('../models/user');
 const Cohort = require('../models/cohort');
@@ -88,6 +89,21 @@ router.post('/user-create', (req, res, next) => {
           sgMail.send(msg);
           res.status(200).json(cohortId);
         });
+    })
+    .catch(next);
+});
+
+router.delete('/:id', (req, res, next) => {
+  if (!req.session.currentUser) {
+    return res.status(401).json({ code: 'unauthorized' });
+  }
+  const id = req.params.id;
+  if (!id || !ObjectId.isValid(id)) {
+    res.status(404).json({ code: 'not-found' });
+  }
+  User.remove({ _id: id })
+    .then(() => {
+      res.json({ message: 'user deleted' });
     })
     .catch(next);
 });
