@@ -3,17 +3,14 @@
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
-const ObjectId = Schema.Types.ObjectId;
+const Unit = require('./unit');
 
 const daySchema = new Schema({
   date: {
     type: Date,
     required: true
   },
-  units: [{
-    type: ObjectId,
-    ref: 'Unit'
-  }]
+  units: [Unit.schema]
 });
 
 const Day = mongoose.model('Day', daySchema);

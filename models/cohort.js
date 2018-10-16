@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
+const Unit = require('./unit');
 
 const cohortSchema = new Schema({
   teacher: [{
@@ -40,10 +41,7 @@ const cohortSchema = new Schema({
     type: ObjectId,
     ref: 'Unit'
   }],
-  parkingLot: [{
-    type: ObjectId,
-    ref: 'Unit'
-  }],
+  parkingLot: [Unit.schema],
   language: {
     type: String,
     enum: ['es', 'en'],

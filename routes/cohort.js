@@ -2,6 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const ObjectId = require('mongoose').Types.ObjectId;
 
 const Cohort = require('../models/cohort');
@@ -66,10 +67,32 @@ router.post('/create', (req, res, next) => {
 
   const category = req.body.type;
   return Curriculum.findOne({ type: category })
+    .populate('units')
     .then((result) => {
       if (!result) {
         res.status(404).json({ code: 'not-found' });
       }
+      const newUnits = [];
+      result.units.forEach((item) => {
+        if (item.subCategory !== 'break') {
+          const unit = new Unit({
+            mandatory: item.mandatory,
+            category: item.category,
+            subCategory: item.subCategory,
+            title: item.title,
+            module: item.module,
+            links: item.links,
+            learningObjectives: item.learningObjectives,
+            duration: item.duration,
+            description: item.description,
+            day: item.day,
+            position: item.position
+          });
+          unit._id = mongoose.Types.ObjectId();
+          unit.save();
+          newUnits.push(unit);
+        }
+      });
       const cohort = new Cohort({
         teacher: req.body.teacher,
         tas: req.body.tas,
@@ -77,24 +100,45 @@ router.post('/create', (req, res, next) => {
         type: req.body.type,
         language: req.body.language,
         startDate: req.body.startDate,
-        parkingLot: result.units,
+        parkingLot: newUnits,
         days: days
       });
       return cohort.save()
         .then(() => {
           return cohort.populate('days');
         })
+        // .then(() => {
+      // return Curriculum.find({ category: 'break' });
+      // result.units.forEach(() => {
+
+      // });
+        // })
         .then(() => {
-          return Unit.find({ category: 'break' });
-        })
-        .then((results) => {
-          for (let i = 0; i < results.length; i++) {
-            results[i].position = 10000 + (i * 1000);
-            results[i].save();
-          }
+          const newBreaks = [];
+          result.units.forEach((unit, index) => {
+            if (unit.subCategory === 'break') {
+              const breakNew = new Unit({
+                mandatory: unit.mandatory,
+                category: unit.category,
+                subCategory: unit.subCategory,
+                title: unit.title,
+                module: unit.module,
+                links: unit.links,
+                learningObjectives: unit.learningObjectives,
+                duration: unit.duration,
+                description: unit.description,
+                day: unit.day,
+                position: unit.position
+              });
+              breakNew._id = mongoose.Types.ObjectId();
+              breakNew.position = 10000 + (index * 1000);
+              breakNew.save();
+              newBreaks.push(breakNew);
+            }
+          });
           cohort.days.forEach((day) => {
-            results.forEach((result) => {
-              day.units.push(result._id);
+            newBreaks.forEach((result) => {
+              day.units.push(result);
               return day.save();
             });
           });
@@ -133,7 +177,6 @@ router.get('/:id', (req, res, next) => {
     .populate('tas')
     .populate('teacher')
     .populate({ path: 'days', populate: { path: 'units' } })
-    .populate('parkingLot')
     .then((cohort) => {
       if (!cohort) {
         return res.status(404).json({ code: 'not-found' });

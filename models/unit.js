@@ -8,7 +8,8 @@ const ObjectId = Schema.Types.ObjectId;
 const unitSchema = new Schema({
   mandatory: {
     type: Boolean,
-    required: true
+    required: true,
+    default: true
   },
   category: {
     type: String,

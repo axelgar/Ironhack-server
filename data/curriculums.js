@@ -61,7 +61,13 @@ const curriculums = [{
     'S.U. + K.O. 3',
     'S.U. + K.O. 4',
     'S.U. + K.O. 5',
-    'Course Overview'
+    'Course Overview',
+    'BREAK 1',
+    'BREAK 2',
+    'Lunch',
+    'BREAK 3',
+    'BREAK 4',
+    'checkout'
   ],
   type: 'webdev'
 }, {

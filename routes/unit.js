@@ -2,6 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const ObjectId = require('mongoose').Types.ObjectId;
 
 const Unit = require('../models/unit');
@@ -18,23 +19,6 @@ router.get('/', (req, res, next) => {
     })
     .catch(next);
 });
-
-// router.post('/create', (req, res, next) => {
-// if (req.session.currentUser) {
-//   return res.status(401).json({ code: 'unauthorized' });
-// }
-//   // ----- TODO -----//
-//   const { flavour, topping } = req.body;
-//   if (!flavour || !topping) {
-//     return res.status(422).json({ code: 'unprosessable-entity' });
-//   }
-//   const cohort = new Cohort(req.body);
-//   cohort.save()
-//     .then(() => {
-//       res.status(200).json(cohort);
-//     })
-//     .catch(next);
-// });
 
 router.get('/:id', (req, res, next) => {
   if (!req.session.currentUser) {
@@ -71,7 +55,8 @@ router.put('/transfer/:id', (req, res, next) => {
     return res.status(401).json({ code: 'unauthorized' });
   }
   const mongoose = require('mongoose');
-  const unitId = mongoose.mongo.ObjectID(req.params.id);
+  const unitId = mongoose.mongo.ObjectID(req.body.unit._id);
+  const unit = req.body.unit;
   if (!unitId || !ObjectId.isValid(unitId)) {
     res.status(404).json({ code: 'not-found' });
   }
@@ -88,29 +73,27 @@ router.put('/transfer/:id', (req, res, next) => {
     })
     .then((result) => {
       if (result) {
-        return Cohort.findByIdAndUpdate(sourceList, { $pull: { parkingLot: unitId } }).exec()
+        return Cohort.findByIdAndUpdate(sourceList, { $pull: { parkingLot: { _id: unitId } } }).exec()
           .then(() => {
             return Day.findById(targetList);
           })
           .then((result) => {
             result.units.forEach((unit) => {
               if (unit === unitId) {
-                console.log(unit);
-                console.log(unitId);
                 newCard = false;
                 return newCard;
               }
             });
             if (newCard) {
-              return Day.findByIdAndUpdate(targetList, { $push: { units: unitId } }).exec()
+              return Day.findByIdAndUpdate(targetList, { $push: { units: unit } }).exec()
                 .then(list => res.status(200).json({ message: 'unit successfully updated', list: list }));
             } else {
               res.status(422).json({ code: 'unprosessable-entity' });
             }
           });
       } else {
-        return Day.findByIdAndUpdate(sourceList, { $pull: { units: unitId } }).exec()
-          .then(() => {
+        return Day.findByIdAndUpdate(sourceList, { $pull: { units: { _id: unitId } } }).exec()
+          .then((results) => {
             return Cohort.findById(targetList);
           })
           .then((result) => {
@@ -121,7 +104,7 @@ router.put('/transfer/:id', (req, res, next) => {
                 }
               });
               if (newCard) {
-                return Cohort.findByIdAndUpdate(targetList, { $push: { parkingLot: unitId } }).exec()
+                return Cohort.findByIdAndUpdate(targetList, { $push: { parkingLot: unit } }).exec()
                   .then(list => res.status(200).json({ message: 'unit successfully updated', list: list }));
               } else {
                 res.status(422).json({ code: 'unprosessable-entity' });
@@ -131,14 +114,12 @@ router.put('/transfer/:id', (req, res, next) => {
                 .then((result) => {
                   result.units.forEach((unit) => {
                     if (unit === unitId) {
-                      console.log(unit);
-                      console.log(unitId);
                       newCard = false;
                       return newCard;
                     }
                   });
                   if (newCard) {
-                    return Day.findByIdAndUpdate(targetList, { $push: { units: unitId } }).exec()
+                    return Day.findByIdAndUpdate(targetList, { $push: { units: unit } }).exec()
                       .then(list => res.status(200).json({ message: 'unit successfully updated', list: list }));
                   } else {
                     res.status(422).json({ code: 'unprosessable-entity' });
@@ -166,6 +147,47 @@ router.put('/:id', (req, res, next) => {
       res.status(200).json(unit);
     })
     .catch(error => next(error));
+});
+
+router.post('/unit-create', (req, res, next) => {
+  if (!req.session.currentUser) {
+    return res.status(401).json({ code: 'unauthorized' });
+  }
+
+  const title = req.body.unit.title;
+  const category = req.body.unit.category;
+  const subCategory = req.body.unit.subCategory;
+  const module = req.body.unit.module;
+  const duration = req.body.unit.duration;
+
+  const cohortId = req.body.cohortId;
+
+  if (!title || !category || !subCategory || !module || !duration) {
+    return res.status(422).json({ code: 'validation' });
+  }
+
+  return Unit.findOne({ title }, 'title')
+    .then((unitExists) => {
+      if (unitExists) {
+        return res.status(422).json({ code: 'title-not-unique' });
+      }
+      const newUnit = Unit({
+        title,
+        category,
+        subCategory,
+        module,
+        duration
+      });
+      return newUnit.save()
+        .then((unit) => {
+          const newUnit = mongoose.Types.ObjectId(unit.id);
+          return Cohort.findOneAndUpdate(cohortId, { $push: { parkingLot: newUnit } }).exec();
+        })
+        .then(() => {
+          res.status(200).json(cohortId);
+        });
+    })
+    .catch(next);
 });
 
 module.exports = router;
