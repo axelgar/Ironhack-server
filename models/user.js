@@ -23,6 +23,13 @@ const userSchema = new Schema({
   },
   lastName: {
     type: String
+  },
+  description: {
+    type: String
+  },
+  profilePic: {
+    type: String,
+    default: 'https://thevoicefinder.com/wp-content/themes/the-voice-finder/images/default-img.png'
   }
 });
 
