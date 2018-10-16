@@ -180,6 +180,24 @@ router.put('/add-project', (req, res, next) => {
     .catch(error => next(error));
 });
 
+router.delete('/delete-project/:id', (req, res, next) => {
+  const user = req.session.currentUser;
+  if (!req.session.currentUser) {
+    return res.status(401).json({ code: 'unauthorized' });
+  }
+  const id = req.params.id;
+  const projectId = mongoose.mongo.ObjectID(id);
+  if (!id || !ObjectId.isValid(id)) {
+    res.status(404).json({ code: 'not-found' });
+  }
+  const options = { new: true };
+  User.findByIdAndUpdate(user._id, { $pull: { projects: { _id: projectId } } }, options)
+    .then(user => {
+      res.status(200).json(user);
+    })
+    .catch(error => next(error));
+});
+
 router.get('/:id', (req, res, next) => {
   if (!req.session.currentUser) {
     return res.status(401).json({ code: 'unauthorized' });
