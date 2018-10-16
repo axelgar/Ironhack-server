@@ -6,10 +6,12 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 const mongoose = require('mongoose');
-const ObjectId = require('mongoose').Types.ObjectId;
+const uploadCloud = require('../configs/cloudinary.js');
+const saltRounds = 10;
 
 const User = require('../models/user');
 const Cohort = require('../models/cohort');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -89,6 +91,129 @@ router.post('/user-create', (req, res, next) => {
           sgMail.send(msg);
           res.status(200).json(cohortId);
         });
+    })
+    .catch(next);
+});
+
+router.get('/settings', (req, res, next) => {
+  const user = req.session.currentUser;
+  if (!req.session.currentUser) {
+    return res.status(401).json({ code: 'unauthorized' });
+  }
+  // const id = req.params.id;
+  // if (!id || !ObjectId.isValid(id)) {
+  //   return res.status(404).json({ code: 'not-found' });
+  // }
+  User.findById(user._id)
+    .then((result) => {
+      const user = { user: result };
+
+      return res.status(200).json(user);
+    })
+    .catch(next);
+});
+
+router.put('/settings', (req, res, next) => {
+  const user = req.session.currentUser;
+  if (!req.session.currentUser) {
+    return res.redirect('/auth/login');
+  }
+  // const id = req.params.id;
+  // if (!id || !ObjectId.isValid(id)) {
+  //   return res.status(404).json({ code: 'not-found1' });
+  // }
+  const { currentPassword, newPassword } = req.body;
+  const validPassword = user.password;
+
+  const salt = bcrypt.genSaltSync(saltRounds);
+  const oldPassword = bcrypt.hashSync(validPassword, salt);
+
+  if (!oldPassword || !validPassword) {
+    return res.status(404).json({ code: 'not-found2' });
+  }
+
+  if (bcrypt.compareSync(currentPassword, validPassword)) {
+    const salt = bcrypt.genSaltSync(saltRounds);
+    const hashedPassword = bcrypt.hashSync(newPassword, salt);
+
+    User.findOneAndUpdate({ _id: user._id }, { password: hashedPassword }, { new: true })
+      .then((result) => {
+        req.session.currentUser = result;
+        return res.status(200).json({ code: 'password updated' });
+      })
+      .catch(next);
+  } else {
+    return res.status(404).json({ code: 'not-found3' });
+  }
+});
+
+router.post('/edit', uploadCloud.single('file'), function (req, res, next) {
+  const user = req.session.currentUser;
+  if (!req.session.currentUser) {
+    return res.status(404).json({ code: 'not-found' }); // todo not autorised
+  }
+  const updates = {
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    description: req.body.description,
+    profilePic: req.file.url
+  };
+  User.findOneAndUpdate({ _id: user._id }, { $set: updates }, { new: true })
+    .then((user) => {
+      return res.status(200).json(user);
+    })
+    .catch(next);
+});
+
+router.put('/add-project', (req, res, next) => {
+  const user = req.session.currentUser;
+  if (!req.session.currentUser) {
+    return res.status(401).json({ code: 'unauthorized' });
+  }
+  const update = req.body;
+  console.log(update);
+  const options = { new: true };
+  User.findByIdAndUpdate(user._id, { $push: { projects: update } }, options)
+    .then(user => {
+      res.status(200).json(user);
+    })
+    .catch(error => next(error));
+});
+
+router.delete('/delete-project/:id', (req, res, next) => {
+  const user = req.session.currentUser;
+  if (!req.session.currentUser) {
+    return res.status(401).json({ code: 'unauthorized' });
+  }
+  const id = req.params.id;
+  const projectId = mongoose.mongo.ObjectID(id);
+  if (!id || !ObjectId.isValid(id)) {
+    res.status(404).json({ code: 'not-found' });
+  }
+  const options = { new: true };
+  User.findByIdAndUpdate(user._id, { $pull: { projects: { _id: projectId } } }, options)
+    .then(user => {
+      res.status(200).json(user);
+    })
+    .catch(error => next(error));
+});
+
+router.get('/:id', (req, res, next) => {
+  if (!req.session.currentUser) {
+    return res.status(401).json({ code: 'unauthorized' });
+  }
+  const id = req.params.id;
+  if (!id || !ObjectId.isValid(id)) {
+    res.status(404).json({ code: 'not-found' });
+  }
+  User.findById(id)
+    .then((user) => {
+      if (!user) {
+        console.log(user);
+        return res.status(404).json({ code: 'not-found' });
+      }
+      console.log(user);
+      res.status(200).json(user);
     })
     .catch(next);
 });

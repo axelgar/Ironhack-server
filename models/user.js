@@ -23,7 +23,23 @@ const userSchema = new Schema({
   },
   lastName: {
     type: String
-  }
+  },
+  description: {
+    type: String
+  },
+  profilePic: {
+    type: String,
+    default: 'https://thevoicefinder.com/wp-content/themes/the-voice-finder/images/default-img.png'
+  },
+  projects: [{
+    title: String,
+    presLink: String,
+    deployLink: String,
+    module: {
+      type: String,
+      enum: ['M1', 'M2', 'M3']
+    }
+  }]
 });
 
 const User = mongoose.model('User', userSchema);
