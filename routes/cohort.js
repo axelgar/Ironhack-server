@@ -32,7 +32,7 @@ router.post('/create', (req, res, next) => {
   const days = [];
 
   let startDay = new Day({ date: req.body.startDate });
-  let firstDayAm = new Day({ date: startDay.date.setTime(startDay.date.getTime() + 1 * 86400000) });
+  let firstDayAm = new Day({ date: startDay.date.setTime(startDay.date.getTime() + 0 * 86400000) });
   firstDayAm.save();
   // .then((result) => {
   //   const promisesOfUpdatingUnitId = data.map((result.units) => updateUnitIds(days.units));
