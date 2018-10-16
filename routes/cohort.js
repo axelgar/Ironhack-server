@@ -126,7 +126,7 @@ router.get('/:id', (req, res, next) => {
   }
   const id = req.params.id;
   if (!id || !ObjectId.isValid(id)) {
-    res.status(404).json({ code: 'not-found' });
+    return res.status(404).json({ code: 'not-found' });
   }
   Cohort.findById(id)
     .populate('students')
@@ -136,7 +136,7 @@ router.get('/:id', (req, res, next) => {
     .populate('parkingLot')
     .then((cohort) => {
       if (!cohort) {
-        res.status(404).json({ code: 'not-found' });
+        return res.status(404).json({ code: 'not-found' });
       }
       res.status(200).json(cohort);
     })
