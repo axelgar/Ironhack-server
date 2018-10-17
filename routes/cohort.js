@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const ObjectId = require('mongoose').Types.ObjectId;
+const uploadCloud = require('../configs/cloudinary.js');
 
 const Cohort = require('../models/cohort');
 const Day = require('../models/day');
@@ -182,6 +183,25 @@ router.get('/:id', (req, res, next) => {
         return res.status(404).json({ code: 'not-found' });
       }
       res.status(200).json(cohort);
+    })
+    .catch(next);
+});
+
+router.post('/:id/drive', uploadCloud.single('file'), function (req, res, next) {
+  if (!req.session.currentUser) {
+    return res.status(401).json({ code: 'unauthorized' });
+  }
+  const id = req.params.id;
+  if (!id || !ObjectId.isValid(id)) {
+    return res.status(404).json({ code: 'not-found' });
+  }
+  const cohortId = mongoose.mongo.ObjectID(id);
+  // const update = {
+  //   image: req.file.url
+  // };
+  Cohort.findOneAndUpdate({ _id: cohortId }, { $push: { images: req.file.url } }, { new: true })
+    .then((user) => {
+      return res.status(200).json(user);
     })
     .catch(next);
 });

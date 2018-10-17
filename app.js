@@ -25,6 +25,11 @@ mongoose.connect(process.env.MONGODB_URI, {
   reconnectTries: Number.MAX_VALUE
 });
 
+app.use(cors({
+  credentials: true,
+  origin: [process.env.CLIENT_URL]
+}));
+
 app.use(session({
   store: new MongoStore({
     mongooseConnection: mongoose.connection,
@@ -36,16 +41,6 @@ app.use(session({
   cookie: {
     maxAge: 24 * 60 * 60 * 1000
   }
-}));
-
-// app.use((req, res, next) => {
-//   app.locals.currentUser = req.session.currentUser;
-//   next();
-// });
-
-app.use(cors({
-  credentials: true,
-  origin: [process.env.CLIENT_URL]
 }));
 
 app.use(logger('dev'));
