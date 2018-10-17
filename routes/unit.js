@@ -189,8 +189,7 @@ router.post('/unit-create', (req, res, next) => {
       });
       return newUnit.save()
         .then((unit) => {
-          const newUnit = mongoose.Types.ObjectId(unit.id);
-          return Cohort.findOneAndUpdate(cohortId, { $push: { parkingLot: newUnit } }).exec();
+          return Cohort.findOneAndUpdate(cohortId, { $push: { parkingLot: unit } }).exec();
         })
         .then(() => {
           res.status(200).json(cohortId);
