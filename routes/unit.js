@@ -2,7 +2,6 @@
 
 const express = require('express');
 const router = express.Router();
-const mongoose = require('mongoose');
 const ObjectId = require('mongoose').Types.ObjectId;
 
 const Unit = require('../models/unit');
