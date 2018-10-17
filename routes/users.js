@@ -57,7 +57,8 @@ router.post('/user-create', (req, res, next) => {
         password: hashPass,
         role,
         firstName,
-        lastName
+        lastName,
+        cohort: cohortId
       });
 
       return newUser.save()
