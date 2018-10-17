@@ -25,6 +25,12 @@ mongoose.connect(process.env.MONGODB_URI, {
   reconnectTries: Number.MAX_VALUE
 });
 
+console.log('SEVER STARTING', process.env.CLIENT_URL);
+
+app.use((req, res, next) => {
+  console.log('INCOMING REQUEST', req.path, process.env.CLIENT_URL);
+  next();
+});
 app.use(cors({
   credentials: true,
   origin: [process.env.CLIENT_URL]
