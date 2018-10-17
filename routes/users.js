@@ -173,7 +173,6 @@ router.put('/add-project', (req, res, next) => {
     return res.status(401).json({ code: 'unauthorized' });
   }
   const update = req.body;
-  console.log(update);
   const options = { new: true };
   User.findByIdAndUpdate(user._id, { $push: { projects: update } }, options)
     .then(user => {
@@ -211,10 +210,8 @@ router.get('/:id', (req, res, next) => {
   User.findById(id)
     .then((user) => {
       if (!user) {
-        console.log(user);
         return res.status(404).json({ code: 'not-found' });
       }
-      console.log(user);
       res.status(200).json(user);
     })
     .catch(next);
