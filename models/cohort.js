@@ -49,7 +49,8 @@ const cohortSchema = new Schema({
   },
   nickname: {
     type: String
-  }
+  },
+  images: []
 });
 
 const Cohort = mongoose.model('Cohort', cohortSchema);
