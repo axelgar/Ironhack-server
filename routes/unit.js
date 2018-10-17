@@ -36,16 +36,25 @@ router.get('/:id', (req, res, next) => {
 });
 
 // router.delete('/:id', (req, res, next) => {
-// if (req.session.currentUser) {
-//   return res.status(401).json({ code: 'unauthorized' });
-// }
+//   if (!req.session.currentUser) {
+//     return res.status(401).json({ code: 'unauthorized' });
+//   }
 //   const id = req.params.id;
 //   if (!id || !ObjectId.isValid(id)) {
 //     res.status(404).json({ code: 'not-found' });
 //   }
-//   Cohort.remove({ _id: id })
+//   const promiseArray = [];
+
+//   Unit.deleteOne({ _id: id })
 //     .then(() => {
-//       res.status(200).json({ code: 'cohort deleted' });
+//       Cohort.find({ 'parkingLot._id': id })
+//         .then((cohorts) => {
+//           cohorts.forEach((cohort) => {
+//             promiseArray.push(cohort.update({ $pull: { parkingLot: { _id: id } } }));
+//           });
+//           Promise.all(promiseArray)
+//             .then(() => res.status(200).json({ code: 'unit deleted' }));
+//         });
 //     })
 //     .catch(next);
 // });
