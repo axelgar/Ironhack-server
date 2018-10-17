@@ -156,6 +156,8 @@ router.post('/edit', uploadCloud.single('file'), function (req, res, next) {
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     description: req.body.description,
+    linkedin: req.body.linkedin,
+    github: req.body.github,
     profilePic: req.file.url
   };
   User.findOneAndUpdate({ _id: user._id }, { $set: updates }, { new: true })

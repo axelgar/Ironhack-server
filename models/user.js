@@ -39,7 +39,13 @@ const userSchema = new Schema({
       type: String,
       enum: ['M1', 'M2', 'M3']
     }
-  }]
+  }],
+  linkedin: {
+    type: String
+  },
+  github: {
+    type: String
+  }
 });
 
 const User = mongoose.model('User', userSchema);
