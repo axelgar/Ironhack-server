@@ -25,12 +25,6 @@ mongoose.connect(process.env.MONGODB_URI, {
   reconnectTries: Number.MAX_VALUE
 });
 
-console.log('SEVER STARTING', process.env.CLIENT_URL);
-
-app.use((req, res, next) => {
-  console.log('INCOMING REQUEST', req.path, process.env.CLIENT_URL);
-  next();
-});
 app.use(cors({
   credentials: true,
   origin: [process.env.CLIENT_URL]
@@ -48,11 +42,6 @@ app.use(session({
     maxAge: 24 * 60 * 60 * 1000
   }
 }));
-
-// app.use((req, res, next) => {
-//   app.locals.currentUser = req.session.currentUser;
-//   next();
-// });
 
 app.use(logger('dev'));
 app.use(express.json());
