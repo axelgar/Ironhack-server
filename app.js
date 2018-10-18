@@ -17,6 +17,7 @@ const cohortRouter = require('./routes/cohort');
 const unitRouter = require('./routes/unit');
 const curriculumRouter = require('./routes/curriculum');
 const chatRouter = require('./routes/chat');
+const sgMail = require('@sendgrid/mail');
 
 const app = express();
 
@@ -30,6 +31,8 @@ app.use(cors({
   credentials: true,
   origin: [process.env.CLIENT_URL]
 }));
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 app.use(session({
   store: new MongoStore({
