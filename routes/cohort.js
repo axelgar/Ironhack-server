@@ -17,7 +17,7 @@ router.get('/', (req, res, next) => {
   }
   Cohort.find({})
     .then((results) => {
-      res.json(results);
+      res.status(200).json(results);
     })
     .catch(next);
 });
@@ -239,7 +239,7 @@ router.delete('/:id', (req, res, next) => {
   }
   Cohort.remove({ _id: id })
     .then(() => {
-      res.json({ message: 'cohort deleted' });
+      res.status(200).json({ message: 'cohort deleted' });
     })
     .catch(next);
 });
