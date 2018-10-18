@@ -64,14 +64,14 @@ const users = [{
   lastName: 'Rodriguez',
   profilePic: 'https://res.cloudinary.com/dzzqvtry0/image/upload/v1539788404/0.jpg'
 }, {
-  email: 'ta5@ironhack.com',
+  email: 'raphaelmmontenegro@gmail.com',
   password: '$2b$10$4PBatLxbJMbxg.9lrdee4ewBiMmSwjU8gD9myZqgyTQ91yqg/XPiq',
   role: 'ta',
   firstName: 'Rapha',
   lastName: 'Montenegro',
   profilePic: 'https://res.cloudinary.com/dzzqvtry0/image/upload/v1539788404/0-4.jpg'
 }, {
-  email: 'ta5@ironhack.com',
+  email: 'annalfr@gmail.com',
   password: '$2b$10$4PBatLxbJMbxg.9lrdee4ewBiMmSwjU8gD9myZqgyTQ91yqg/XPiq',
   role: 'ta',
   firstName: 'Anna',
