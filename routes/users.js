@@ -39,6 +39,10 @@ router.post('/user-create', (req, res, next) => {
   const lastName = req.body.lastName;
   const cohortId = req.body.cohortId._value.id;
 
+  if (!cohortId || !ObjectId.isValid(cohortId)) {
+    res.status(404).json({ code: 'not-found' });
+  }
+
   if (!email || !password || !role) {
     return res.status(422).json({ code: 'validation' });
   }
@@ -65,11 +69,11 @@ router.post('/user-create', (req, res, next) => {
         .then((user) => {
           const newUser = mongoose.Types.ObjectId(user.id);
           if (user.role === 'student') {
-            return Cohort.findOneAndUpdate(cohortId, { $push: { students: newUser } }).exec();
+            return Cohort.findOneAndUpdate(cohortId, { $push: { students: newUser } });
           } else if (user.role === 'ta') {
-            return Cohort.findOneAndUpdate(cohortId, { $push: { tas: newUser } }).exec();
+            return Cohort.findOneAndUpdate(cohortId, { $push: { tas: newUser } });
           } else if (user.role === 'teacher') {
-            return Cohort.findOneAndUpdate(cohortId, { $push: { teacher: newUser } }).exec();
+            return Cohort.findOneAndUpdate(cohortId, { $push: { teacher: newUser } });
           } else {
             return res.status(422).json({ code: 'adding not possible' });
           }
@@ -101,10 +105,6 @@ router.get('/settings', (req, res, next) => {
   if (!req.session.currentUser) {
     return res.status(401).json({ code: 'unauthorized' });
   }
-  // const id = req.params.id;
-  // if (!id || !ObjectId.isValid(id)) {
-  //   return res.status(404).json({ code: 'not-found' });
-  // }
   User.findById(user._id)
     .then((result) => {
       const user = { user: result };
@@ -119,10 +119,6 @@ router.put('/settings', (req, res, next) => {
   if (!req.session.currentUser) {
     return res.redirect('/auth/login');
   }
-  // const id = req.params.id;
-  // if (!id || !ObjectId.isValid(id)) {
-  //   return res.status(404).json({ code: 'not-found1' });
-  // }
   const { currentPassword, newPassword } = req.body;
   const validPassword = user.password;
 
