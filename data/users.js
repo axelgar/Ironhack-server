@@ -29,7 +29,7 @@ const users = [{
   lastName: 'Torgal',
   profilePic: 'https://res.cloudinary.com/dzzqvtry0/image/upload/v1539788404/0-5.jpg'
 }, {
-  email: 'teacher@ironhack.com',
+  email: 'thor.jubera.albo@gmail.com',
   password: '$2b$10$4PBatLxbJMbxg.9lrdee4ewBiMmSwjU8gD9myZqgyTQ91yqg/XPiq',
   role: 'teacher',
   firstName: 'Thor',
@@ -38,7 +38,7 @@ const users = [{
 }, {
   email: 'ta1@ironhack.com',
   password: '$2b$10$4PBatLxbJMbxg.9lrdee4ewBiMmSwjU8gD9myZqgyTQ91yqg/XPiq',
-  role: 'ta',
+  role: 'teacher',
   firstName: 'Filipe',
   lastName: 'Rainho',
   profilePic: 'https://res.cloudinary.com/dzzqvtry0/image/upload/v1539788404/0-2.jpg'
