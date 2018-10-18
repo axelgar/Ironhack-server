@@ -48,23 +48,23 @@ router.post('/create', (req, res, next) => {
     days.push(nextDayAm);
   }
 
-  // let newDate1 = new Day({ date: startDay.date.setTime(startDay.date.getTime() + 2 * 86400000) });
+  let newDate1 = new Day({ date: startDay.date.setTime(startDay.date.getTime() + 2 * 86400000) });
 
-  // for (let ix = 0; ix < 5; ix++) {
-  //   let nextDayAm = new Day({ date: newDate1.date.setTime(newDate1.date.getTime() + 1 * 86400000) });
-  //   nextDayAm.save();
-  //   days.push(nextDayAm);
-  // }
+  for (let ix = 0; ix < 5; ix++) {
+    let nextDayAm = new Day({ date: newDate1.date.setTime(newDate1.date.getTime() + 1 * 86400000) });
+    nextDayAm.save();
+    days.push(nextDayAm);
+  }
 
-  // for (let iy = 0; iy < 7; iy++) {
-  //   let newDate2 = new Day({ date: startDay.date.setTime(startDay.date.getTime() + 7 * 86400000) });
+  for (let iy = 0; iy < 7; iy++) {
+    let newDate2 = new Day({ date: startDay.date.setTime(startDay.date.getTime() + 7 * 86400000) });
 
-  //   for (let ix = 0; ix < 5; ix++) {
-  //     let nextDayAm = new Day({ date: newDate2.date.setTime(newDate2.date.getTime() + 1 * 86400000) });
-  //     nextDayAm.save();
-  //     days.push(nextDayAm);
-  //   }
-  // }
+    for (let ix = 0; ix < 5; ix++) {
+      let nextDayAm = new Day({ date: newDate2.date.setTime(newDate2.date.getTime() + 1 * 86400000) });
+      nextDayAm.save();
+      days.push(nextDayAm);
+    }
+  }
 
   const category = req.body.type;
   return Curriculum.findOne({ type: category })

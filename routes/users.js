@@ -77,13 +77,13 @@ router.post('/user-create', (req, res, next) => {
         .then(() => {
           const msg = {
             to: email,
-            from: 'no-reply@ironhack.com',
+            from: 'noreply@ironhack.com',
             subject: 'Welcome to Ironhack :name',
             text: 'Hello plain world!',
             html: '<p>Hello HTML world!</p>',
             templateId: 'd-6410714675c14f29b5ed39816bc7334d',
             dynamic_template_data: {
-              subject: 'hello Ironhacker',
+              subject: 'Hello Ironhacker',
               name: firstName,
               username: email,
               password: password

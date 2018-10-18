@@ -17,6 +17,12 @@ const messageSchema = new Schema({
   user: [User.schema],
   picture: {
     type: String
+  },
+  firstName: {
+    type: String
+  },
+  lastName: {
+    type: String
   }
 });
 

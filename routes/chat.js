@@ -23,6 +23,8 @@ router.post('/create-message', (req, res, next) => {
   const room = req.body.room;
   const message = req.body.message;
   const user = req.body.user;
+  const firstName = req.body.firstName;
+  const lastName = req.body.lastName;
   const picture = req.body.picture;
 
   if (!room || !message || !user || !picture) {
@@ -32,6 +34,8 @@ router.post('/create-message', (req, res, next) => {
     room,
     message,
     user,
+    firstName,
+    lastName,
     picture
   });
   newMessage.save()
