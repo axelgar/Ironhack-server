@@ -22,7 +22,7 @@ const users = [{
   lastName: 'Skudlik',
   profilePic: 'https://res.cloudinary.com/dzzqvtry0/image/upload/v1539789110/0-11.jpg'
 }, {
-  email: 'teacher@ironhack.com',
+  email: 'andre.torgal@gmail.com',
   password: '$2b$10$4PBatLxbJMbxg.9lrdee4ewBiMmSwjU8gD9myZqgyTQ91yqg/XPiq',
   role: 'teacher',
   firstName: 'Andre',
@@ -43,7 +43,7 @@ const users = [{
   lastName: 'Rainho',
   profilePic: 'https://res.cloudinary.com/dzzqvtry0/image/upload/v1539788404/0-2.jpg'
 }, {
-  email: 'ta2@ironhack.com',
+  email: 'sebastian.nugnez@gmail.com',
   password: '$2b$10$4PBatLxbJMbxg.9lrdee4ewBiMmSwjU8gD9myZqgyTQ91yqg/XPiq',
   role: 'ta',
   firstName: 'Seba',
@@ -57,7 +57,7 @@ const users = [{
   lastName: 'Bacusoy',
   profilePic: 'https://res.cloudinary.com/dzzqvtry0/image/upload/v1539788405/0-7.jpg'
 }, {
-  email: 'ta4@ironhack.com',
+  email: 'alexrcid@hotmail.com',
   password: '$2b$10$4PBatLxbJMbxg.9lrdee4ewBiMmSwjU8gD9myZqgyTQ91yqg/XPiq',
   role: 'ta',
   firstName: 'Alex',
