@@ -69,11 +69,11 @@ router.post('/user-create', (req, res, next) => {
         .then((user) => {
           const newUser = mongoose.Types.ObjectId(user.id);
           if (user.role === 'student') {
-            return Cohort.findOneAndUpdate(cohortId, { $push: { students: newUser } });
+            return Cohort.findOneAndUpdate({ _id: cohortId }, { $push: { students: newUser } });
           } else if (user.role === 'ta') {
-            return Cohort.findOneAndUpdate(cohortId, { $push: { tas: newUser } });
+            return Cohort.findOneAndUpdate({ _id: cohortId }, { $push: { tas: newUser } });
           } else if (user.role === 'teacher') {
-            return Cohort.findOneAndUpdate(cohortId, { $push: { teacher: newUser } });
+            return Cohort.findOneAndUpdate({ _id: cohortId }, { $push: { teacher: newUser } });
           } else {
             return res.status(422).json({ code: 'adding not possible' });
           }
