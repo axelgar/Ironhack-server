@@ -199,7 +199,7 @@ router.post('/:id/drive', uploadCloud.single('file'), function (req, res, next) 
   // const update = {
   //   image: req.file.url
   // };
-  Cohort.findOneAndUpdate({ _id: cohortId }, { $push: { images: req.file.url } }, { new: true })
+  Cohort.findOneAndUpdate({ _id: cohortId }, { $push: { images: req.file.secure_url } }, { new: true })
     .then((user) => {
       return res.status(200).json(user);
     })
